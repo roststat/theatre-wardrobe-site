@@ -309,50 +309,6 @@
   .booking-msg{font-size:13px;margin-top:10px;text-align:center}
   .booking-msg.error{color:#b3261e}
   .booking-msg.ok{color:#2e7d32}
-
-  /* ---------- ЧАТ-БОТ ---------- */
-  .chat-fab{
-    position:fixed;right:16px;bottom:20px;z-index:60;
-    width:54px;height:54px;border-radius:50%;
-    background:var(--curtain);color:#fff;
-    display:flex;align-items:center;justify-content:center;
-    font-size:24px;border:1px solid rgba(227,201,130,.4);
-    box-shadow:var(--shadow);cursor:pointer;transition:transform .15s;
-  }
-  .chat-fab:active{transform:scale(.94)}
-
-  .chat-panel{
-    position:fixed;right:16px;bottom:88px;z-index:60;
-    width:min(340px,calc(100vw - 32px));height:min(460px,calc(100vh - 220px));
-    background:var(--card);color:var(--ink);border-radius:var(--radius);
-    box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden;
-    transform:translateY(16px) scale(.97);opacity:0;pointer-events:none;
-    transition:.2s ease;
-  }
-  .chat-panel.open{transform:none;opacity:1;pointer-events:auto}
-
-  .chat-head{
-    background:var(--ink);color:var(--gold-soft);
-    font-weight:700;font-size:14px;padding:12px 14px;
-    display:flex;align-items:center;justify-content:space-between;
-  }
-  .chat-close{background:none;border:none;color:var(--gold-soft);font-size:16px;cursor:pointer;padding:2px 6px}
-
-  .chat-body{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
-  .chat-msg{max-width:85%;padding:9px 12px;border-radius:12px;font-size:13.5px;line-height:1.35}
-  .chat-msg.user{align-self:flex-end;background:var(--curtain);color:#fff}
-  .chat-msg.bot{align-self:flex-start;background:#ece0cd;color:var(--ink)}
-  .chat-msg.bot.typing{color:var(--muted);font-style:italic}
-
-  .chat-form{display:flex;gap:8px;padding:10px;border-top:1px solid rgba(0,0,0,.06)}
-  .chat-form input{
-    flex:1;border:1px solid #ddcdb8;border-radius:10px;padding:10px 12px;
-    font-family:"Manrope";font-size:13.5px;background:#fff;color:var(--ink);
-  }
-  .chat-form button{
-    border:none;background:var(--curtain);color:#fff;border-radius:10px;
-    width:42px;font-size:16px;cursor:pointer;
-  }
 </style>
 </head>
 <body>
@@ -448,19 +404,6 @@
   </div>
 </div>
 
-<!-- Чат-бот -->
-<div class="chat-fab" id="chatFab" title="Чат с помощником">💬</div>
-<div class="chat-panel" id="chatPanel">
-  <div class="chat-head">
-    <span>Помощник по аренде</span>
-    <button class="chat-close" id="chatClose" aria-label="Закрыть">✕</button>
-  </div>
-  <div class="chat-body" id="chatBody"></div>
-  <form class="chat-form" id="chatForm">
-    <input type="text" id="chatInput" placeholder="Напишите вопрос..." autocomplete="off">
-    <button type="submit" aria-label="Отправить">➤</button>
-  </form>
-</div>
 
 <script>
 /* ============================================================
@@ -760,68 +703,6 @@ function plural(n,f){const a=Math.abs(n)%100,b=a%10;return a>10&&a<20?f[2]:b>1&&
   });
 })();
 
-// ---------- ЧАТ-БОТ ----------
-const CHAT_WEBHOOK_URL = 'https://hook.eu1.make.com/5cjuj8l57po0fst7h3y34q6akxewr1rp';
-
-(function(){
-  const fab = document.getElementById('chatFab');
-  const panel = document.getElementById('chatPanel');
-  const closeBtn = document.getElementById('chatClose');
-  const body = document.getElementById('chatBody');
-  const form = document.getElementById('chatForm');
-  const input = document.getElementById('chatInput');
-
-  const history = [];
-
-  function addMsg(role, text){
-    const div = document.createElement('div');
-    div.className = 'chat-msg ' + (role === 'user' ? 'user' : 'bot');
-    div.textContent = text;
-    body.appendChild(div);
-    body.scrollTop = body.scrollHeight;
-    return div;
-  }
-
-  addMsg('bot', 'Здравствуйте! Я помогу подобрать костюм, расскажу про размеры, цены и условия аренды. Чем могу помочь?');
-
-  fab.addEventListener('click', () => {
-    panel.classList.toggle('open');
-    if (panel.classList.contains('open')) input.focus();
-  });
-  closeBtn.addEventListener('click', () => panel.classList.remove('open'));
-
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const text = input.value.trim();
-    if (!text) return;
-    addMsg('user', text);
-    history.push({ role:'user', content:text });
-    input.value = '';
-    input.disabled = true;
-
-    const typing = addMsg('bot', 'Печатает…');
-    typing.classList.add('typing');
-
-    try{
-      const res = await fetch(CHAT_WEBHOOK_URL, {
-        method:'POST',
-        headers:{'content-type':'application/json'},
-        body: JSON.stringify({ messages: history })
-      });
-      const data = await res.json();
-      typing.remove();
-      const reply = data.reply || 'Извините, не получилось ответить. Напишите нам в Авито.';
-      addMsg('bot', reply);
-      history.push({ role:'assistant', content: reply });
-    }catch(err){
-      typing.remove();
-      addMsg('bot', 'Ошибка соединения. Попробуйте позже или напишите в Авито.');
-    }finally{
-      input.disabled = false;
-      input.focus();
-    }
-  });
-})();
 </script>
 </body>
 </html>
