@@ -221,6 +221,28 @@
   }
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
+  /* ---------- LIGHTBOX ---------- */
+  .photo img{cursor:zoom-in}
+  .lightbox{
+    position:fixed;inset:0;z-index:80;
+    background:rgba(10,5,7,.88);
+    display:flex;align-items:center;justify-content:center;
+    padding:24px;opacity:0;pointer-events:none;transition:opacity .25s;
+  }
+  .lightbox.open{opacity:1;pointer-events:auto}
+  .lightbox img{
+    max-width:100%;max-height:100%;border-radius:12px;
+    box-shadow:var(--shadow);
+    transform:scale(.94);transition:transform .25s;
+  }
+  .lightbox.open img{transform:none}
+  .lightbox-close{
+    position:absolute;top:18px;right:18px;
+    width:40px;height:40px;border-radius:50%;border:none;
+    background:rgba(255,255,255,.12);color:#fff;font-size:20px;
+    cursor:pointer;display:flex;align-items:center;justify-content:center;
+  }
+
   /* ---------- ЧАТ-БОТ ---------- */
   .chat-fab{
     position:fixed;right:16px;bottom:104px;z-index:60;
@@ -306,6 +328,12 @@
 </div>
 
 <div class="toast" id="toast"></div>
+
+<!-- Лайтбокс для фото -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lightboxClose" aria-label="Закрыть">✕</button>
+  <img id="lightboxImg" src="" alt="">
+</div>
 
 <!-- Чат-бот -->
 <div class="chat-fab" id="chatFab" title="Чат с помощником">💬</div>
@@ -424,6 +452,34 @@ function toast(text){
 
 function esc(s){return String(s).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));}
 function plural(n,f){const a=Math.abs(n)%100,b=a%10;return a>10&&a<20?f[2]:b>1&&b<5?f[1]:b===1?f[0]:f[2];}
+
+// ---------- ЛАЙТБОКС ----------
+(function(){
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightboxImg');
+  const lightboxClose = document.getElementById('lightboxClose');
+
+  function openLightbox(src, alt){
+    lightboxImg.src = src;
+    lightboxImg.alt = alt;
+    lightbox.classList.add('open');
+  }
+  function closeLightbox(){
+    lightbox.classList.remove('open');
+    lightboxImg.src = '';
+  }
+
+  grid.addEventListener('click', (e) => {
+    const img = e.target.closest('.photo img');
+    if (img) openLightbox(img.src, img.alt);
+  });
+  lightbox.addEventListener('click', (e) => {
+    if (e.target === lightbox || e.target === lightboxClose) closeLightbox();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeLightbox();
+  });
+})();
 
 // ---------- ЧАТ-БОТ ----------
 const CHAT_WEBHOOK_URL = 'https://hook.eu1.make.com/5cjuj8l57po0fst7h3y34q6akxewr1rp';
