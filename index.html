@@ -110,6 +110,27 @@
   .cat-head h2{font-family:"Playfair Display",serif;font-weight:600;font-size:22px}
   .count{font-size:13px;color:var(--gold-soft);white-space:nowrap}
 
+  /* ---------- ФИЛЬТРЫ ---------- */
+  .filters{
+    display:flex;flex-wrap:wrap;gap:10px;align-items:center;
+    justify-content:space-between;margin-bottom:16px;
+  }
+  .filter-group{display:flex;gap:6px;flex-wrap:wrap}
+  .filter-btn{
+    border:1px solid rgba(227,201,130,.3);background:rgba(255,255,255,.04);
+    color:var(--cream);font-size:13px;font-weight:600;
+    padding:8px 14px;border-radius:999px;cursor:pointer;transition:.15s;
+  }
+  .filter-btn:hover{background:rgba(255,255,255,.08)}
+  .filter-btn.active{background:var(--curtain);color:#fff;border-color:var(--curtain)}
+  .filter-select{
+    border:1px solid rgba(227,201,130,.3);background:rgba(255,255,255,.04);
+    color:var(--cream);font-size:13px;font-weight:600;
+    padding:8px 14px;border-radius:999px;cursor:pointer;
+    font-family:"Manrope";
+  }
+  .filter-select option{color:var(--ink)}
+
   .grid{
     display:grid;grid-template-columns:1fr 1fr;gap:12px;
   }
@@ -341,6 +362,16 @@
       <h2>Каталог</h2>
       <span class="count" id="t-count"></span>
     </div>
+    <div class="filters">
+      <div class="filter-group" id="genderFilters">
+        <button class="filter-btn active" data-gender="">Все</button>
+        <button class="filter-btn" data-gender="ж">Женские</button>
+        <button class="filter-btn" data-gender="м">Мужские</button>
+      </div>
+      <select class="filter-select" id="seriesFilter">
+        <option value="">Все серии</option>
+      </select>
+    </div>
     <div class="grid" id="grid"></div>
   </section>
 
@@ -433,16 +464,16 @@ const SETTINGS = {
       tag: "" — убрать ярлык (напр. «хит» / «детский» / «нет в наличии»)
    ============================================================ */
 const COSTUMES = [
-  { id:7,  series:'Белоснежка и семь гномов', name:'Белоснежка',             size:'универсальный (взрослый)', material:'бархат, атлас, кружево', price:2000, deposit:5000, img:'img/2026-06-13 15.06.58.jpg', tag:'' },
-  { id:8,  series:'Белоснежка и семь гномов', name:'Гном (зелёный костюм)',  size:'универсальный (взрослый)', material:'флис', price:2000, deposit:5000, img:'img/2026-06-13 15.06.33.jpg', tag:'' },
-  { id:9,  series:'Белоснежка и семь гномов', name:'Гном (розовый костюм)',  size:'универсальный (взрослый)', material:'флис', price:2000, deposit:5000, img:'img/2026-06-13 15.06.54.jpg', tag:'' },
-  { id:10, series:'Белоснежка и семь гномов', name:'Гном (жёлтый костюм)',   size:'универсальный (взрослый)', material:'флис, борода', price:2000, deposit:5000, img:'img/2026-06-13 15.07.03.jpg', tag:'' },
-  { id:11, series:'Белоснежка и семь гномов', name:'Гном (оранжевый костюм)',size:'универсальный (взрослый)', material:'флис, борода', price:2000, deposit:5000, img:'img/2026-06-13 15.07.11.jpg', tag:'' },
-  { id:12, series:'Белоснежка и семь гномов', name:'Гном-профессор',         size:'универсальный (взрослый)', material:'флис, очки, борода', price:2000, deposit:5000, img:'img/2026-06-13 15.06.44.jpg', tag:'' },
+  { id:7,  series:'Белоснежка и семь гномов', gender:'ж', name:'Белоснежка',             size:'универсальный (взрослый)', material:'бархат, атлас, кружево', price:2000, deposit:5000, img:'img/2026-06-13 15.06.58.jpg', tag:'' },
+  { id:8,  series:'Белоснежка и семь гномов', gender:'м', name:'Гном (зелёный костюм)',  size:'универсальный (взрослый)', material:'флис', price:2000, deposit:5000, img:'img/2026-06-13 15.06.33.jpg', tag:'' },
+  { id:9,  series:'Белоснежка и семь гномов', gender:'м', name:'Гном (розовый костюм)',  size:'универсальный (взрослый)', material:'флис', price:2000, deposit:5000, img:'img/2026-06-13 15.06.54.jpg', tag:'' },
+  { id:10, series:'Белоснежка и семь гномов', gender:'м', name:'Гном (жёлтый костюм)',   size:'универсальный (взрослый)', material:'флис, борода', price:2000, deposit:5000, img:'img/2026-06-13 15.07.03.jpg', tag:'' },
+  { id:11, series:'Белоснежка и семь гномов', gender:'м', name:'Гном (оранжевый костюм)',size:'универсальный (взрослый)', material:'флис, борода', price:2000, deposit:5000, img:'img/2026-06-13 15.07.11.jpg', tag:'' },
+  { id:12, series:'Белоснежка и семь гномов', gender:'м', name:'Гном-профессор',         size:'универсальный (взрослый)', material:'флис, очки, борода', price:2000, deposit:5000, img:'img/2026-06-13 15.06.44.jpg', tag:'' },
 
-  { id:13, series:'Золушка', name:'Золушка (синее платье)',  size:'универсальный (взрослый)', material:'атлас, отделка вышивкой', price:2000, deposit:5000, img:'img/2026-06-13 16.49.27.jpg', tag:'' },
-  { id:14, series:'Золушка', name:'Золушка (бальное платье)',size:'универсальный (взрослый)', material:'атлас, меховая накидка, бусы', price:2000, deposit:5000, img:'img/2026-06-13 16.49.49.jpg', tag:'' },
-  { id:15, series:'Золушка', name:'Принц',                   size:'универсальный (взрослый)', material:'бархат, атлас, бант-жабо', price:2000, deposit:5000, img:'img/2026-06-13 16.49.55.jpg', tag:'' }
+  { id:13, series:'Золушка', gender:'ж', name:'Золушка (синее платье)',  size:'универсальный (взрослый)', material:'атлас, отделка вышивкой', price:2000, deposit:5000, img:'img/2026-06-13 16.49.27.jpg', tag:'' },
+  { id:14, series:'Золушка', gender:'ж', name:'Золушка (бальное платье)',size:'универсальный (взрослый)', material:'атлас, меховая накидка, бусы', price:2000, deposit:5000, img:'img/2026-06-13 16.49.49.jpg', tag:'' },
+  { id:15, series:'Золушка', gender:'м', name:'Принц',                   size:'универсальный (взрослый)', material:'бархат, атлас, бант-жабо', price:2000, deposit:5000, img:'img/2026-06-13 16.49.55.jpg', tag:'' }
 ];
 
 /* ============================================================
@@ -456,45 +487,82 @@ const words = SETTINGS.title.trim().split(' ');
 const last = words.pop();
 titleEl.innerHTML = (words.join(' ') + ' <span class="accent">' + last + '</span>').trim();
 document.getElementById('t-sub').textContent = SETTINGS.subtitle;
-document.getElementById('t-count').textContent = COSTUMES.length + ' ' + plural(COSTUMES.length, ['костюм','костюма','костюмов']) + ' в наличии';
 document.getElementById('t-foot').textContent = SETTINGS.footer;
 
 const termsEl = document.getElementById('t-terms');
 termsEl.innerHTML = '<h3>Условия аренды</h3><ul>' +
   SETTINGS.terms.map(t => '<li>' + esc(t) + '</li>').join('') + '</ul>';
 
-// карточки (с группировкой по сериям)
+// ---------- ФИЛЬТРЫ + КАРТОЧКИ (с группировкой по сериям) ----------
 const grid = document.getElementById('grid');
-let lastSeries = null;
-grid.innerHTML = COSTUMES.map((c,i) => {
-  let head = '';
-  if (c.series && c.series !== lastSeries){
-    lastSeries = c.series;
-    const count = COSTUMES.filter(x => x.series === c.series).length;
-    head = '<div class="series-head"><h3>' + esc(c.series) + '</h3>' +
-      '<span>' + count + ' ' + plural(count, ['костюм','костюма','костюмов']) + '</span></div>';
-  }
-  const photo = c.img
-    ? '<img src="' + esc(c.img) + '" alt="' + esc(c.name) + '" loading="lazy">'
-    : '<div class="ph"><span>🎭</span><small>Фото скоро</small></div>';
-  const tag = c.tag ? '<div class="tag">' + esc(c.tag) + '</div>' : '';
-  return head +
-  '<article class="card" style="animation-delay:' + (i*70) + 'ms">' +
-    '<div class="photo">' + photo +
-      '<div class="badge">№ ' + c.id + '</div>' + tag +
-    '</div>' +
-    '<div class="body">' +
-      '<div class="name">' + esc(c.name) + '</div>' +
-      '<div class="meta"><span>Размер: <b>' + esc(c.size) + '</b></span>' +
-        (c.material ? '<span>' + esc(c.material) + '</span>' : '') + '</div>' +
-      '<div class="price-row">' +
-        '<div class="price">' + rub(c.price) + ' <span>/ сутки</span></div>' +
-        (c.deposit ? '<div class="deposit">залог ' + rub(c.deposit) + '</div>' : '') +
+const seriesFilter = document.getElementById('seriesFilter');
+const genderFilters = document.getElementById('genderFilters');
+let currentGender = '';
+
+// заполняем список серий
+const seriesList = [...new Set(COSTUMES.map(c => c.series).filter(Boolean))];
+seriesList.forEach(s => {
+  const opt = document.createElement('option');
+  opt.value = s; opt.textContent = s;
+  seriesFilter.appendChild(opt);
+});
+
+function renderGrid(){
+  const series = seriesFilter.value;
+  let lastSeries = null;
+  const visible = COSTUMES
+    .map((c,i) => ({c,i}))
+    .filter(({c}) => (!currentGender || c.gender === currentGender) && (!series || c.series === series));
+
+  document.getElementById('t-count').textContent = visible.length + ' ' + plural(visible.length, ['костюм','костюма','костюмов']) + ' в наличии';
+
+  grid.innerHTML = visible.map(({c,i}) => {
+    let head = '';
+    if (c.series && c.series !== lastSeries){
+      lastSeries = c.series;
+      const count = visible.filter(({c:x}) => x.series === c.series).length;
+      head = '<div class="series-head"><h3>' + esc(c.series) + '</h3>' +
+        '<span>' + count + ' ' + plural(count, ['костюм','костюма','костюмов']) + '</span></div>';
+    }
+    const photo = c.img
+      ? '<img src="' + esc(c.img) + '" alt="' + esc(c.name) + '" loading="lazy">'
+      : '<div class="ph"><span>🎭</span><small>Фото скоро</small></div>';
+    const tag = c.tag ? '<div class="tag">' + esc(c.tag) + '</div>' : '';
+    return head +
+    '<article class="card" style="animation-delay:' + (i*70) + 'ms">' +
+      '<div class="photo">' + photo +
+        '<div class="badge">№ ' + c.id + '</div>' + tag +
       '</div>' +
-      '<button class="btn" onclick="bookCostume(' + i + ')">Забронировать</button>' +
-    '</div>' +
-  '</article>';
-}).join('');
+      '<div class="body">' +
+        '<div class="name">' + esc(c.name) + '</div>' +
+        '<div class="meta"><span>Размер: <b>' + esc(c.size) + '</b></span>' +
+          (c.material ? '<span>' + esc(c.material) + '</span>' : '') + '</div>' +
+        '<div class="price-row">' +
+          '<div class="price">' + rub(c.price) + ' <span>/ сутки</span></div>' +
+          (c.deposit ? '<div class="deposit">залог ' + rub(c.deposit) + '</div>' : '') +
+        '</div>' +
+        '<button class="btn" onclick="bookCostume(' + i + ')">Забронировать</button>' +
+      '</div>' +
+    '</article>';
+  }).join('');
+
+  if (!visible.length){
+    grid.innerHTML = '<div class="series-head" style="text-align:center;border:none"><span>Костюмы не найдены</span></div>';
+  }
+}
+
+genderFilters.addEventListener('click', (e) => {
+  const btn = e.target.closest('.filter-btn');
+  if (!btn) return;
+  genderFilters.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentGender = btn.dataset.gender;
+  renderGrid();
+});
+
+seriesFilter.addEventListener('change', renderGrid);
+
+renderGrid();
 
 let toastTimer;
 function toast(text){
