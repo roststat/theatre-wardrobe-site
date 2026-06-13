@@ -51,7 +51,7 @@
     min-height:100vh;
     line-height:1.5;
     -webkit-font-smoothing:antialiased;
-    padding-bottom:96px; /* место под нижнюю панель */
+    padding-bottom:24px;
   }
 
   /* лёгкая «зернистость» как софит на сцене */
@@ -195,26 +195,9 @@
   footer .terms h3{font-family:"Playfair Display",serif;color:var(--gold-soft);font-size:16px;margin-bottom:8px;font-weight:600}
   footer .terms li{margin-left:18px;margin-bottom:4px}
 
-  /* ---------- НИЖНЯЯ ПАНЕЛЬ ---------- */
-  .dock{
-    position:fixed;left:0;right:0;bottom:0;z-index:20;
-    background:linear-gradient(180deg,rgba(20,9,12,0),#140a0c 38%);
-    padding:14px 16px calc(14px + env(safe-area-inset-bottom));
-  }
-  .dock-inner{
-    max-width:760px;margin:0 auto;display:flex;gap:10px;align-items:center;
-    background:var(--card);border-radius:16px;padding:10px 12px;box-shadow:var(--shadow);
-  }
-  .dock-txt{flex:1;font-size:12.5px;color:var(--ink);line-height:1.3}
-  .dock-txt b{color:var(--curtain)}
-  .dock a{
-    text-decoration:none;background:var(--ink);color:var(--gold-soft);
-    font-weight:700;font-size:14px;padding:12px 16px;border-radius:11px;white-space:nowrap;
-  }
-
   /* ---------- ВСПЛЫВАШКА ---------- */
   .toast{
-    position:fixed;left:50%;bottom:96px;transform:translateX(-50%) translateY(20px);
+    position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);
     background:var(--gold);color:#2a1a05;font-weight:600;font-size:14px;
     padding:12px 18px;border-radius:12px;box-shadow:var(--shadow);
     z-index:50;opacity:0;pointer-events:none;transition:.3s;max-width:90vw;text-align:center;
@@ -243,9 +226,48 @@
     cursor:pointer;display:flex;align-items:center;justify-content:center;
   }
 
+  /* ---------- БРОНИРОВАНИЕ ---------- */
+  .booking{
+    position:fixed;inset:0;z-index:90;
+    background:rgba(10,5,7,.6);
+    display:flex;align-items:center;justify-content:center;
+    padding:18px;opacity:0;pointer-events:none;transition:opacity .2s;
+  }
+  .booking.open{opacity:1;pointer-events:auto}
+  .booking-card{
+    width:min(420px,100%);max-height:90vh;overflow-y:auto;
+    background:var(--card);color:var(--ink);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:20px;
+    transform:translateY(12px) scale(.98);transition:transform .2s;
+  }
+  .booking.open .booking-card{transform:none}
+  .booking-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:4px}
+  .booking-head h3{font-family:"Playfair Display",serif;font-size:19px;color:var(--ink)}
+  .booking-close{background:none;border:none;font-size:18px;cursor:pointer;color:var(--muted);padding:2px 4px}
+  .booking-sub{font-size:13px;color:var(--muted);margin-bottom:14px}
+  .booking-field{margin-bottom:12px}
+  .booking-field label{display:block;font-size:13px;font-weight:600;margin-bottom:5px;color:var(--ink)}
+  .booking-row{display:flex;gap:10px}
+  .booking-row .booking-field{flex:1}
+  .booking input, .booking textarea{
+    width:100%;border:1px solid #ddcdb8;border-radius:10px;padding:10px 12px;
+    font-family:"Manrope";font-size:14px;background:#fff;color:var(--ink);
+  }
+  .booking textarea{resize:vertical;min-height:60px}
+  .booking-busy{font-size:12.5px;color:var(--muted);margin:-2px 0 12px}
+  .booking-busy b{color:var(--curtain)}
+  .booking-submit{
+    width:100%;border:none;background:var(--curtain);color:#fff;font-weight:700;
+    font-size:15px;padding:13px;border-radius:12px;cursor:pointer;
+  }
+  .booking-submit:disabled{opacity:.6;cursor:default}
+  .booking-msg{font-size:13px;margin-top:10px;text-align:center}
+  .booking-msg.error{color:#b3261e}
+  .booking-msg.ok{color:#2e7d32}
+
   /* ---------- ЧАТ-БОТ ---------- */
   .chat-fab{
-    position:fixed;right:16px;bottom:104px;z-index:60;
+    position:fixed;right:16px;bottom:20px;z-index:60;
     width:54px;height:54px;border-radius:50%;
     background:var(--curtain);color:#fff;
     display:flex;align-items:center;justify-content:center;
@@ -255,7 +277,7 @@
   .chat-fab:active{transform:scale(.94)}
 
   .chat-panel{
-    position:fixed;right:16px;bottom:172px;z-index:60;
+    position:fixed;right:16px;bottom:88px;z-index:60;
     width:min(340px,calc(100vw - 32px));height:min(460px,calc(100vh - 220px));
     background:var(--card);color:var(--ink);border-radius:var(--radius);
     box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden;
@@ -300,8 +322,8 @@
 
     <div class="steps">
       <div class="step"><span class="num">1</span><p>Выберите<br>костюм</p></div>
-      <div class="step"><span class="num">2</span><p>Нажмите<br>«Хочу этот»</p></div>
-      <div class="step"><span class="num">3</span><p>Вставьте номер<br>в чат Авито</p></div>
+      <div class="step"><span class="num">2</span><p>Нажмите<br>«Забронировать»</p></div>
+      <div class="step"><span class="num">3</span><p>Укажите даты<br>и контакты</p></div>
     </div>
   </header>
 
@@ -319,13 +341,6 @@
   </footer>
 </div>
 
-<!-- Нижняя панель -->
-<div class="dock">
-  <div class="dock-inner">
-    <div class="dock-txt">Чтобы забронировать — <b>напишите номер костюма</b> в чат Авито, где вы получили ссылку.</div>
-    <a id="t-avito" href="#">Открыть Авито</a>
-  </div>
-</div>
 
 <div class="toast" id="toast"></div>
 
@@ -333,6 +348,44 @@
 <div class="lightbox" id="lightbox">
   <button class="lightbox-close" id="lightboxClose" aria-label="Закрыть">✕</button>
   <img id="lightboxImg" src="" alt="">
+</div>
+
+<!-- Бронирование -->
+<div class="booking" id="booking">
+  <div class="booking-card">
+    <div class="booking-head">
+      <h3 id="bookingTitle">Бронирование</h3>
+      <button class="booking-close" id="bookingClose" aria-label="Закрыть">✕</button>
+    </div>
+    <p class="booking-sub" id="bookingSub"></p>
+    <p class="booking-busy" id="bookingBusy"></p>
+    <form id="bookingForm">
+      <div class="booking-row">
+        <div class="booking-field">
+          <label for="bookingFrom">Дата с</label>
+          <input type="date" id="bookingFrom" required>
+        </div>
+        <div class="booking-field">
+          <label for="bookingTo">Дата по</label>
+          <input type="date" id="bookingTo" required>
+        </div>
+      </div>
+      <div class="booking-field">
+        <label for="bookingName">Ваше имя</label>
+        <input type="text" id="bookingName" required>
+      </div>
+      <div class="booking-field">
+        <label for="bookingPhone">Телефон</label>
+        <input type="tel" id="bookingPhone" placeholder="+7 ..." required>
+      </div>
+      <div class="booking-field">
+        <label for="bookingComment">Комментарий (необязательно)</label>
+        <textarea id="bookingComment"></textarea>
+      </div>
+      <button class="booking-submit" type="submit" id="bookingSubmit">Отправить заявку</button>
+      <div class="booking-msg" id="bookingMsg"></div>
+    </form>
+  </div>
 </div>
 
 <!-- Чат-бот -->
@@ -356,10 +409,10 @@
 const SETTINGS = {
   title:    'Театральный гардероб',          // название (последнее слово выделится золотым)
   subtitle: 'Аренда костюмов для спектаклей, праздников, фотосессий и утренников.',
-  avitoUrl: 'https://www.avito.ru/',         // ссылка на ваше объявление или профиль Авито
+  bookingUrl: 'https://script.google.com/macros/s/AKfycbxXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX/exec', // URL Google Apps Script (Web App)
   terms: [                                   // условия аренды (пункты списка)
     'Залог возвращается при сдаче костюма без повреждений.',
-    'Бронь — по предоплате через чат Авито.',
+    'Бронь подтверждается после нашего звонка/сообщения по указанному телефону.',
     'Срок аренды и доставку обсуждаем индивидуально.'
   ],
   footer: 'Самовывоз: Ялта. Работаем ежедневно 10:00–20:00.'
@@ -391,7 +444,6 @@ const last = words.pop();
 titleEl.innerHTML = (words.join(' ') + ' <span class="accent">' + last + '</span>').trim();
 document.getElementById('t-sub').textContent = SETTINGS.subtitle;
 document.getElementById('t-count').textContent = COSTUMES.length + ' ' + plural(COSTUMES.length, ['костюм','костюма','костюмов']) + ' в наличии';
-document.getElementById('t-avito').href = SETTINGS.avitoUrl || '#';
 document.getElementById('t-foot').textContent = SETTINGS.footer;
 
 const termsEl = document.getElementById('t-terms');
@@ -418,29 +470,10 @@ grid.innerHTML = COSTUMES.map((c,i) => {
         '<div class="price">' + rub(c.price) + ' <span>/ сутки</span></div>' +
         (c.deposit ? '<div class="deposit">залог ' + rub(c.deposit) + '</div>' : '') +
       '</div>' +
-      '<button class="btn" onclick="order(' + i + ')">Хочу этот костюм</button>' +
+      '<button class="btn" onclick="bookCostume(' + i + ')">Забронировать</button>' +
     '</div>' +
   '</article>');
 }).join('');
-
-// действие «Хочу этот костюм»: копируем готовое сообщение в буфер
-function order(i){
-  const c = COSTUMES[i];
-  const msg = 'Здравствуйте! Меня интересует костюм № ' + c.id + ' «' + c.name + '». Подскажите по аренде, пожалуйста.';
-  const done = () => toast('Сообщение скопировано — вставьте его в чат Авито 👍');
-  if (navigator.clipboard && navigator.clipboard.writeText){
-    navigator.clipboard.writeText(msg).then(done).catch(() => fallbackCopy(msg, done));
-  } else { fallbackCopy(msg, done); }
-}
-
-function fallbackCopy(text, cb){
-  const ta = document.createElement('textarea');
-  ta.value = text; ta.style.position='fixed'; ta.style.opacity='0';
-  document.body.appendChild(ta); ta.select();
-  try{ document.execCommand('copy'); cb(); }
-  catch(e){ toast('Напишите в чат Авито: костюм № ' + text.match(/№ (\d+)/)[1]); }
-  document.body.removeChild(ta);
-}
 
 let toastTimer;
 function toast(text){
@@ -478,6 +511,115 @@ function plural(n,f){const a=Math.abs(n)%100,b=a%10;return a>10&&a<20?f[2]:b>1&&
   });
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeLightbox();
+  });
+})();
+
+// ---------- БРОНИРОВАНИЕ ----------
+(function(){
+  const booking = document.getElementById('booking');
+  const bookingTitle = document.getElementById('bookingTitle');
+  const bookingSub = document.getElementById('bookingSub');
+  const bookingBusy = document.getElementById('bookingBusy');
+  const bookingClose = document.getElementById('bookingClose');
+  const bookingForm = document.getElementById('bookingForm');
+  const bookingFrom = document.getElementById('bookingFrom');
+  const bookingTo = document.getElementById('bookingTo');
+  const bookingSubmit = document.getElementById('bookingSubmit');
+  const bookingMsg = document.getElementById('bookingMsg');
+  let currentCostume = null;
+
+  window.bookCostume = function(i){
+    currentCostume = COSTUMES[i];
+    bookingTitle.textContent = 'Бронирование: ' + currentCostume.name;
+    bookingSub.textContent = 'Костюм № ' + currentCostume.id + ' — ' + rub(currentCostume.price) + ' / сутки, залог ' + (currentCostume.deposit ? rub(currentCostume.deposit) : '—');
+    bookingMsg.textContent = '';
+    bookingMsg.className = 'booking-msg';
+    bookingForm.reset();
+    bookingSubmit.disabled = false;
+    bookingSubmit.textContent = 'Отправить заявку';
+    const today = new Date().toISOString().slice(0,10);
+    bookingFrom.min = today;
+    bookingTo.min = today;
+    bookingBusy.textContent = 'Загружаем занятые даты…';
+    booking.classList.add('open');
+
+    if (SETTINGS.bookingUrl && SETTINGS.bookingUrl.indexOf('AKfycbxXXXX') === -1){
+      fetch(SETTINGS.bookingUrl + '?action=busy&costume=' + currentCostume.id)
+        .then(r => r.json())
+        .then(data => {
+          const ranges = (data && data.busy) || [];
+          if (ranges.length){
+            bookingBusy.innerHTML = 'Занятые даты: <b>' + ranges.map(r => r.from + ' — ' + r.to).join(', ') + '</b>';
+          } else {
+            bookingBusy.textContent = 'Свободно на все даты.';
+          }
+        })
+        .catch(() => { bookingBusy.textContent = ''; });
+    } else {
+      bookingBusy.textContent = '';
+    }
+  };
+
+  function closeBooking(){
+    booking.classList.remove('open');
+    currentCostume = null;
+  }
+
+  bookingClose.addEventListener('click', closeBooking);
+  booking.addEventListener('click', (e) => {
+    if (e.target === booking) closeBooking();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && booking.classList.contains('open')) closeBooking();
+  });
+
+  bookingForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!currentCostume) return;
+    if (bookingTo.value < bookingFrom.value){
+      bookingMsg.textContent = '«Дата по» не может быть раньше «Дата с».';
+      bookingMsg.className = 'booking-msg error';
+      return;
+    }
+    bookingSubmit.disabled = true;
+    bookingSubmit.textContent = 'Отправляем…';
+    bookingMsg.textContent = '';
+    bookingMsg.className = 'booking-msg';
+
+    const payload = {
+      action: 'book',
+      costumeId: currentCostume.id,
+      costumeName: currentCostume.name,
+      from: bookingFrom.value,
+      to: bookingTo.value,
+      name: document.getElementById('bookingName').value,
+      phone: document.getElementById('bookingPhone').value,
+      comment: document.getElementById('bookingComment').value
+    };
+
+    fetch(SETTINGS.bookingUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    })
+      .then(r => r.json())
+      .then(data => {
+        if (data && data.ok){
+          bookingMsg.textContent = 'Заявка отправлена! Мы свяжемся с вами для подтверждения.';
+          bookingMsg.className = 'booking-msg ok';
+          bookingSubmit.textContent = 'Отправлено ✓';
+          toast('Заявка на костюм № ' + currentCostume.id + ' отправлена 👍');
+          setTimeout(closeBooking, 1800);
+        } else {
+          throw new Error((data && data.error) || 'unknown');
+        }
+      })
+      .catch(() => {
+        bookingMsg.textContent = 'Не удалось отправить заявку. Попробуйте ещё раз или свяжитесь с нами напрямую.';
+        bookingMsg.className = 'booking-msg error';
+        bookingSubmit.disabled = false;
+        bookingSubmit.textContent = 'Отправить заявку';
+      });
   });
 })();
 
