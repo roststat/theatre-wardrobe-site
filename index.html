@@ -131,6 +131,21 @@
   }
   .filter-select option{color:var(--ink)}
 
+  .filter-active-bar{
+    position:fixed;left:50%;bottom:16px;transform:translateX(-50%) translateY(20px);
+    background:var(--ink);color:var(--gold-soft);
+    font-size:13px;font-weight:600;
+    padding:10px 10px 10px 16px;border-radius:999px;box-shadow:var(--shadow);
+    z-index:55;opacity:0;pointer-events:none;transition:.25s;
+    display:flex;align-items:center;gap:10px;max-width:90vw;
+  }
+  .filter-active-bar.show{opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0)}
+  .filter-active-bar span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .filter-active-bar button{
+    border:none;background:var(--curtain);color:#fff;font-weight:700;
+    font-size:12px;padding:7px 12px;border-radius:999px;cursor:pointer;white-space:nowrap;
+  }
+
   .grid{
     display:grid;grid-template-columns:1fr 1fr;gap:12px;
   }
@@ -384,6 +399,11 @@
 
 <div class="toast" id="toast"></div>
 
+<div class="filter-active-bar" id="filterBar">
+  <span id="filterBarText"></span>
+  <button id="filterBarReset">Сбросить ✕</button>
+</div>
+
 <!-- Лайтбокс для фото -->
 <div class="lightbox" id="lightbox">
   <button class="lightbox-close" id="lightboxClose" aria-label="Закрыть">✕</button>
@@ -549,6 +569,33 @@ function renderGrid(){
   if (!visible.length){
     grid.innerHTML = '<div class="series-head" style="text-align:center;border:none"><span>Костюмы не найдены</span></div>';
   }
+
+  updateFilterBar();
+}
+
+const filterBar = document.getElementById('filterBar');
+const filterBarText = document.getElementById('filterBarText');
+const filterBarReset = document.getElementById('filterBarReset');
+
+function updateFilterBar(){
+  const parts = [];
+  if (currentGender) parts.push(currentGender === 'ж' ? 'Женские' : 'Мужские');
+  if (seriesFilter.value) parts.push(seriesFilter.value);
+
+  if (parts.length){
+    filterBarText.textContent = 'Фильтр: ' + parts.join(', ');
+    filterBar.classList.add('show');
+  } else {
+    filterBar.classList.remove('show');
+  }
+}
+
+function resetFilters(){
+  currentGender = '';
+  seriesFilter.value = '';
+  genderFilters.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  genderFilters.querySelector('[data-gender=""]').classList.add('active');
+  renderGrid();
 }
 
 genderFilters.addEventListener('click', (e) => {
@@ -561,6 +608,7 @@ genderFilters.addEventListener('click', (e) => {
 });
 
 seriesFilter.addEventListener('change', renderGrid);
+filterBarReset.addEventListener('click', resetFilters);
 
 renderGrid();
 
