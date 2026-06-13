@@ -115,6 +115,15 @@
   }
   @media(min-width:560px){.grid{gap:18px}}
 
+  .series-head{
+    grid-column:1/-1;
+    margin:18px 0 2px;padding-bottom:8px;
+    border-bottom:1px solid rgba(227,201,130,.2);
+  }
+  .series-head:first-child{margin-top:0}
+  .series-head h3{font-family:"Playfair Display",serif;font-weight:600;font-size:18px;color:var(--gold-soft)}
+  .series-head span{font-size:12.5px;color:#cdbba9}
+
   .card{
     background:var(--card);color:var(--ink);
     border-radius:var(--radius);overflow:hidden;
@@ -409,7 +418,7 @@
 const SETTINGS = {
   title:    'Театральный гардероб',          // название (последнее слово выделится золотым)
   subtitle: 'Аренда костюмов для спектаклей, праздников, фотосессий и утренников.',
-  bookingUrl: 'https://script.google.com/macros/s/AKfycbxXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX/exec', // URL Google Apps Script (Web App)
+  bookingUrl: 'https://script.google.com/macros/s/AKfycbxiKUskiB6b6XljSuPQb25vlOZb-KBdGRausCYxrgqRBuPkMBemaiw9iL0Mfb2XFvTrMA/exec', // URL Google Apps Script (Web App)
   terms: [                                   // условия аренды (пункты списка)
     'Залог возвращается при сдаче костюма без повреждений.',
     'Бронь подтверждается после нашего звонка/сообщения по указанному телефону.',
@@ -424,12 +433,12 @@ const SETTINGS = {
       tag: "" — убрать ярлык (напр. «хит» / «детский» / «нет в наличии»)
    ============================================================ */
 const COSTUMES = [
-  { id:7,  name:'Белоснежка',             size:'универсальный (взрослый)', material:'бархат, атлас, кружево', price:2000, deposit:5000, img:'img/2026-06-13 15.06.58.jpg', tag:'' },
-  { id:8,  name:'Гном (зелёный костюм)',  size:'универсальный (взрослый)', material:'флис', price:2000, deposit:5000, img:'img/2026-06-13 15.06.33.jpg', tag:'' },
-  { id:9,  name:'Гном (розовый костюм)',  size:'универсальный (взрослый)', material:'флис', price:2000, deposit:5000, img:'img/2026-06-13 15.06.54.jpg', tag:'' },
-  { id:10, name:'Гном (жёлтый костюм)',   size:'универсальный (взрослый)', material:'флис, борода', price:2000, deposit:5000, img:'img/2026-06-13 15.07.03.jpg', tag:'' },
-  { id:11, name:'Гном (оранжевый костюм)',size:'универсальный (взрослый)', material:'флис, борода', price:2000, deposit:5000, img:'img/2026-06-13 15.07.11.jpg', tag:'' },
-  { id:12, name:'Гном-профессор',         size:'универсальный (взрослый)', material:'флис, очки, борода', price:2000, deposit:5000, img:'img/2026-06-13 15.06.44.jpg', tag:'' }
+  { id:7,  series:'Белоснежка и семь гномов', name:'Белоснежка',             size:'универсальный (взрослый)', material:'бархат, атлас, кружево', price:2000, deposit:5000, img:'img/2026-06-13 15.06.58.jpg', tag:'' },
+  { id:8,  series:'Белоснежка и семь гномов', name:'Гном (зелёный костюм)',  size:'универсальный (взрослый)', material:'флис', price:2000, deposit:5000, img:'img/2026-06-13 15.06.33.jpg', tag:'' },
+  { id:9,  series:'Белоснежка и семь гномов', name:'Гном (розовый костюм)',  size:'универсальный (взрослый)', material:'флис', price:2000, deposit:5000, img:'img/2026-06-13 15.06.54.jpg', tag:'' },
+  { id:10, series:'Белоснежка и семь гномов', name:'Гном (жёлтый костюм)',   size:'универсальный (взрослый)', material:'флис, борода', price:2000, deposit:5000, img:'img/2026-06-13 15.07.03.jpg', tag:'' },
+  { id:11, series:'Белоснежка и семь гномов', name:'Гном (оранжевый костюм)',size:'универсальный (взрослый)', material:'флис, борода', price:2000, deposit:5000, img:'img/2026-06-13 15.07.11.jpg', tag:'' },
+  { id:12, series:'Белоснежка и семь гномов', name:'Гном-профессор',         size:'универсальный (взрослый)', material:'флис, очки, борода', price:2000, deposit:5000, img:'img/2026-06-13 15.06.44.jpg', tag:'' }
 ];
 
 /* ============================================================
@@ -450,14 +459,22 @@ const termsEl = document.getElementById('t-terms');
 termsEl.innerHTML = '<h3>Условия аренды</h3><ul>' +
   SETTINGS.terms.map(t => '<li>' + esc(t) + '</li>').join('') + '</ul>';
 
-// карточки
+// карточки (с группировкой по сериям)
 const grid = document.getElementById('grid');
+let lastSeries = null;
 grid.innerHTML = COSTUMES.map((c,i) => {
+  let head = '';
+  if (c.series && c.series !== lastSeries){
+    lastSeries = c.series;
+    const count = COSTUMES.filter(x => x.series === c.series).length;
+    head = '<div class="series-head"><h3>' + esc(c.series) + '</h3>' +
+      '<span>' + count + ' ' + plural(count, ['костюм','костюма','костюмов']) + '</span></div>';
+  }
   const photo = c.img
     ? '<img src="' + esc(c.img) + '" alt="' + esc(c.name) + '" loading="lazy">'
     : '<div class="ph"><span>🎭</span><small>Фото скоро</small></div>';
   const tag = c.tag ? '<div class="tag">' + esc(c.tag) + '</div>' : '';
-  return (
+  return head +
   '<article class="card" style="animation-delay:' + (i*70) + 'ms">' +
     '<div class="photo">' + photo +
       '<div class="badge">№ ' + c.id + '</div>' + tag +
@@ -472,7 +489,7 @@ grid.innerHTML = COSTUMES.map((c,i) => {
       '</div>' +
       '<button class="btn" onclick="bookCostume(' + i + ')">Забронировать</button>' +
     '</div>' +
-  '</article>');
+  '</article>';
 }).join('');
 
 let toastTimer;
